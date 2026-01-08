@@ -2,6 +2,7 @@ import pygame
 from core import *
 from const import *
 
+
 class PyPR:
     def __init__(self, **args):
         # 初始化 pygame
@@ -11,7 +12,8 @@ class PyPR:
         # 初始化窗口
         _window_width = args.get("window_width", DEFAULT_WINDOW_WIDTH)
         _window_height = args.get("window_width", DEFAULT_WINDOW_HEIGHT)
-        self.window = Window(_window_width, _window_height, pygame.DOUBLEBUF | pygame.OPENGL)
+        self.window = Window(_window_width, _window_height,
+                             pygame.DOUBLEBUF | pygame.OPENGL)
 
         self.window.create_window()
 
@@ -25,7 +27,7 @@ class PyPR:
     def _handle_events(self, events: list[pygame.Event]):
         for event in events:
             match event.type:
-                case pygame.QUIT: # 退出
+                case pygame.QUIT:  # 退出
                     self.running = False
 
     def main_loop(self):
@@ -34,6 +36,7 @@ class PyPR:
             events = pygame.event.get()
             self.window.handle_events(events)
             self._handle_events(events)
+
 
 if __name__ == "__main__":
     app = PyPR()
