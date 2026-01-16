@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, Type, Callable
-from const import *
+from arg_specs import *
 
 
 @dataclass

@@ -1,6 +1,6 @@
 import pygame
 from core import *
-from const import *
+from arg_specs import *
 from config import *
 import sys
 
