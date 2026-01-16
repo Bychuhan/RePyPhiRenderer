@@ -7,8 +7,7 @@ from arg_specs import *
 class Config:
     width: int = 800
     height: int = 600
-    resources_dir: str = "/Resources/"
-
+    resources_dir: str = "resources/"
 
 class ArgParser:
     @staticmethod
