@@ -21,7 +21,7 @@ class PyPR:
         self.window.create_window()
 
         # 初始化渲染器
-        self.renderer = Renderer()
+        self.renderer = Renderer(self.config)
         self.renderer.set_blend(True)
 
         # 初始化变量
@@ -39,6 +39,13 @@ class PyPR:
             events = pygame.event.get()
             self.window.handle_events(events)
             self._handle_events(events)
+
+            # 渲染画面
+            self.renderer.clear()
+
+            # TODO
+
+            pygame.display.flip()
 
 
 if __name__ == "__main__":
