@@ -15,9 +15,7 @@ class PyPR:
             pygame.init()
 
         # 初始化窗口
-        _window_width = self.config.width
-        _window_height = self.config.height
-        self.window = Window(_window_width, _window_height,
+        self.window = Window(self.config.width, self.config.height,
                              pygame.DOUBLEBUF | pygame.OPENGL)
 
         self.window.create_window()
