@@ -10,7 +10,8 @@ ARG_ALIASES: dict[str, str] = {
 # 参数类型提示
 ARG_TYPE_HINTS: dict[str, Type] = {
     "width": int,
-    "height": int
+    "height": int,
+    "resources_dir": str
 }
 
 # 参数类型转换器
