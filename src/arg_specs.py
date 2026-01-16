@@ -1,12 +1,6 @@
 import json
 from typing import Type, Callable
 
-# --- 画面 ---
-DEFAULT_WIDTH = 800
-DEFAULT_HEIGHT = 600
-
-# --- 参数解析 ---
-
 # 短参数映射 (参数别名)
 ARG_ALIASES: dict[str, str] = {
     "w": "width",

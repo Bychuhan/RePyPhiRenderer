@@ -5,8 +5,8 @@ from const import *
 
 @dataclass
 class Config:
-    width: int = DEFAULT_WIDTH
-    height: int = DEFAULT_HEIGHT
+    width: int = 800
+    height: int = 600
 
 
 class ArgParser:
