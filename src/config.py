@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, Type, Callable
+
 from arg_specs import *
 
 
@@ -8,6 +9,7 @@ class Config:
     width: int = 800
     height: int = 600
     resources_dir: str = "resources/"
+
 
 class ArgParser:
     @staticmethod

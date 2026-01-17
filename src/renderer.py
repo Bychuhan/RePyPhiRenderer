@@ -1,8 +1,10 @@
 import os
+from typing import Any
+
 import moderngl as mgl
 from loguru import logger
 import numpy as np
-from typing import Any
+
 from config import *
 
 

@@ -1,8 +1,10 @@
+import sys
+
 import pygame
+
 from window import *
 from arg_specs import *
 from config import *
-import sys
 
 
 class PyPR:
