@@ -146,7 +146,7 @@ dependencies = [
 requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "moderngl", specifier = ">=5.12.0" },
-    { name = "numpy", specifier = "==2.4.1" },
+    { name = "numpy", specifier = ">=2.4.1" },
     { name = "pygame-ce", specifier = ">=2.5.6" },
 ]
 
