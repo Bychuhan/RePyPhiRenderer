@@ -1,10 +1,13 @@
 import sys
+import json
+from tkinter.filedialog import askopenfilename
 
 import pygame
 
 from window import *
 from arg_specs import *
 from config import *
+from player import *
 
 
 class PyPR:
@@ -26,8 +29,18 @@ class PyPR:
         self.renderer = Renderer(self.config)
         self.renderer.set_blend(True)
 
+        # 初始化播放器
+        self.player = Player(self.config)
+
         # 初始化变量
         self.running = True
+
+    def import_chart_by_path(self, path: str):
+        with open(path, "r", encoding="utf-8") as f:
+            try:
+                self.player.load_chart(json.load(f), self.config)
+            except Exception as e:
+                logger.error(f"谱面导入失败: {e}")
 
     def _handle_events(self, events: list[pygame.Event]):
         for event in events:
@@ -36,6 +49,8 @@ class PyPR:
                     self.running = False
 
     def main_loop(self):
+        self.player.start()
+
         while self.running:
             # 处理事件
             events = pygame.event.get()
@@ -45,7 +60,7 @@ class PyPR:
             # 渲染画面
             self.renderer.clear()
 
-            # TODO
+            self.player.update(self.renderer)
 
             pygame.display.flip()
 
@@ -55,5 +70,8 @@ if __name__ == "__main__":
                            type_hints=ARG_TYPE_HINTS)
 
     app = PyPR(args=args)
+
+    # TODO: 设置选择文件对话框置顶与对话框参数
+    app.import_chart_by_path(askopenfilename())
 
     app.main_loop()
