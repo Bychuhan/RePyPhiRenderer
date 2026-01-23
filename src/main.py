@@ -67,6 +67,9 @@ class PyPR:
             self.window.handle_events(events)
             self._handle_events(events)
 
+            if not self.running:
+                break
+
             # 渲染画面
             self.renderer.clear()
 
