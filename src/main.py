@@ -52,6 +52,9 @@ class PyPR:
     def import_music(self, music: str | bytes):
         self.player.load_music(music)
 
+    def import_illustration(self, illustration: str | bytes | BytesIO):
+        self.player.load_illustration(illustration, self.renderer)
+
     def _handle_events(self, events: list[pygame.Event]):
         for event in events:
             match event.type:
@@ -87,5 +90,6 @@ if __name__ == "__main__":
     # TODO: 设置选择文件对话框置顶与对话框参数
     app.import_chart_by_path(askopenfilename())
     app.import_music(askopenfilename())
+    app.import_illustration(askopenfilename())
 
     app.main_loop()
