@@ -109,3 +109,6 @@ class ShaderManager:
         shader.release()
 
         self.shaders.pop(name)
+
+    def __contains__(self, name: str):
+        return name in self.shaders
