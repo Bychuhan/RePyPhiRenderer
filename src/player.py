@@ -1,10 +1,12 @@
 from typing import Any
+from io import BytesIO
 
 from loguru import logger
 
 from config import *
 from chart import *
 from timer import *
+from dxsmixer import *
 
 
 class Player:
@@ -15,6 +17,9 @@ class Player:
         self.height = config.height
 
         self.chart: Chart = None
+
+        self.music: musicCls = musicCls()
+        self.loaded_music = False
 
         self.timer = Timer()
         self.timer.reset()
@@ -28,7 +33,19 @@ class Player:
             logger.error("谱面解析失败")
             return
 
+    def load_music(self, music: str | bytes):
+        if not music:
+            logger.warning("未选择音乐文件")
+
+            return
+
+        self.music.load(music)
+        self.loaded_music = True
+
     def start(self):
+        if self.loaded_music:
+            self.music.play()
+
         self.timer.start()
 
     def update(self, renderer: Renderer):
