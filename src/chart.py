@@ -143,7 +143,7 @@ class PhiLine:
 
     def render(self, renderer: Renderer):
         if self.opacity > 0:
-            renderer.render_rect(self.x_pos, self.y_pos, self.width, self.height, self.rotate,
+            renderer.render_rect(x=self.x_pos, y=self.y_pos, w=self.width, h=self.height, r=self.rotate,
                                  color=(*self.rgb_color, self.opacity), anchor=(0.5, 0.5))
 
 
