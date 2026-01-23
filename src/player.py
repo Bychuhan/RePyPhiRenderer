@@ -44,8 +44,13 @@ class Player:
 
             return
 
-        self.music.load(music)
-        self.loaded_music = True
+        try:
+            self.music.load(music)
+            self.loaded_music = True
+        except Exception as e:
+            logger.warning(f"音乐加载失败: {e}")
+
+            return
 
         logger.info("音乐加载成功")
 
