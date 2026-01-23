@@ -36,11 +36,18 @@ class PyPR:
         self.running = True
 
     def import_chart_by_path(self, path: str):
+        if not path:
+            logger.error("未选择谱面文件")
+
+            sys.exit()
+
         with open(path, "r", encoding="utf-8") as f:
             try:
                 self.player.load_chart(json.load(f), self.config)
             except Exception as e:
                 logger.error(f"谱面导入失败: {e}")
+
+                sys.exit()
 
     def import_music(self, music: str | bytes):
         self.player.load_music(music)
