@@ -1,7 +1,7 @@
 import pygame
 import moderngl as mgl
 
-# 外部文件引入
+
 from renderer import *
 
 
