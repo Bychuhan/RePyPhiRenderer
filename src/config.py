@@ -8,7 +8,11 @@ from arg_specs import *
 class Config:
     width: int = 800
     height: int = 600
+
     resources_dir: str = "resources/"
+
+    illustration_blurriness: float = 80.0
+    illustration_brightness: float = 0.1
 
 
 class ArgParser:
