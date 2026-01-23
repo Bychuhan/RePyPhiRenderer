@@ -33,6 +33,8 @@ class Player:
             logger.error("谱面解析失败")
             return
 
+        logger.info("谱面加载成功")
+
     def load_music(self, music: str | bytes):
         if not music:
             logger.warning("未选择音乐文件")
@@ -41,6 +43,8 @@ class Player:
 
         self.music.load(music)
         self.loaded_music = True
+
+        logger.info("音乐加载成功")
 
     def start(self):
         if self.loaded_music:
