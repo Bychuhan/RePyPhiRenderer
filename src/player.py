@@ -1,12 +1,15 @@
 from typing import Any
 from io import BytesIO
+import math
 
 from loguru import logger
+from PIL import Image, ImageFilter
 
 from config import *
 from chart import *
 from timer import *
 from dxsmixer import *
+from texture import TextureCreateTypes
 
 
 class Player:
@@ -21,6 +24,9 @@ class Player:
 
         self.music: musicCls = musicCls()
         self.loaded_music = False
+
+        self.illustration: Image.Image = None
+        self.loaded_illustration = False
 
         self.timer = Timer()
         self.timer.reset()
@@ -54,6 +60,53 @@ class Player:
 
         logger.info("音乐加载成功")
 
+    def load_illustration(self, illustration: str | bytes | BytesIO, renderer: Renderer):
+        if not illustration:
+            logger.warning("未选择曲绘文件")
+
+            return
+
+        try:
+            self.illustration = Image.open(
+                BytesIO(illustration) if isinstance(illustration, bytes) else
+                illustration
+            )
+
+            self.illustration = self.illustration.convert("RGBA")
+            self.illustration = self.illustration.filter(
+                ImageFilter.GaussianBlur(self.config.illustration_blurriness))
+
+            scale = max(
+                self.config.width / self.illustration.width,
+                self.config.height / self.illustration.height
+            )
+            self.illustration = self.illustration.resize((
+                math.ceil(self.illustration.width * scale),
+                math.ceil(self.illustration.height * scale)
+            ))
+
+            renderer.texture_manager.create_texture(
+                renderer.ctx, "illustration", self.illustration, TextureCreateTypes.IMAGE)
+        except Exception as e:
+            logger.warning(f"曲绘加载失败: {e}")
+
+            return
+
+        self.loaded_illustration = True
+        logger.info("曲绘加载成功")
+
+    def render_illustration(self, renderer: Renderer):
+        renderer.render_texture("illustration", x=0, y=0, sx=1, sy=1,
+                                r=0, color=(1, 1, 1, 1), anchor=(0.5, 0.5))
+
+        # 渲染背景压暗
+        # 第一层-固定0.5不透明度
+        renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
+                             color=(0, 0, 0, 0.5), anchor=(0.5, 0.5))
+        # 第二层-不透明度跟随配置
+        renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
+                             color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
+
     def start(self):
         if not self.loaded_chart:
             logger.warning("未导入谱面文件，无法开始播放")
@@ -73,6 +126,9 @@ class Player:
 
         now_time = self.timer.get_time()
         chart_time = self.chart.to_chart_time(now_time)
+
+        if self.loaded_illustration:
+            self.render_illustration(renderer)
 
         self.chart.update(chart_time)
         self.chart.render(renderer)
