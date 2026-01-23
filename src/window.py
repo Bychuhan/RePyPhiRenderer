@@ -6,7 +6,7 @@ from renderer import *
 
 
 class Window:
-    def __init__(self, width: int, height: int, window_flags: int = 0, caption: str = "PyPhiRenderer"):
+    def __init__(self, width: int, height: int, window_flags: int = 0, caption: str = "RePyPhiRenderer"):
         if not pygame.get_init():
             pygame.init()
 
