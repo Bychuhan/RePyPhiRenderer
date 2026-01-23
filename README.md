@@ -5,7 +5,7 @@
 ![Stars](https://img.shields.io/github/stars/Bychuhan/RePyPhiRenderer?style=flat)
 ![Forks](https://img.shields.io/github/forks/Bychuhan/RePyPhiRenderer?style=flat)
 
-基于 Python 的 Phigros 谱面播放 / 渲染器。
+基于 Python 的 Phigros 谱面播放器 / 渲染器。
 
 > [!IMPORTANT]
 > 本项目**与 Phigros 官方无任何关联**，并非由官方**授权**或**认可**的项目。所有游戏相关的**版权**、**商标**、**知识产权**均归 **Pigeon Games** 所有。  
