@@ -17,6 +17,7 @@ class Player:
         self.height = config.height
 
         self.chart: Chart = None
+        self.loaded_chart = False
 
         self.music: musicCls = musicCls()
         self.loaded_music = False
@@ -33,6 +34,8 @@ class Player:
             logger.error("谱面解析失败")
             return
 
+        self.loaded_chart = True
+
         logger.info("谱面加载成功")
 
     def load_music(self, music: str | bytes):
@@ -47,12 +50,22 @@ class Player:
         logger.info("音乐加载成功")
 
     def start(self):
+        if not self.loaded_chart:
+            logger.warning("未导入谱面文件，无法开始播放")
+
+            return
+
         if self.loaded_music:
             self.music.play()
 
         self.timer.start()
 
     def update(self, renderer: Renderer):
+        if not self.loaded_chart:
+            logger.warning("未导入谱面文件")
+
+            return
+
         now_time = self.timer.get_time()
         chart_time = self.chart.to_chart_time(now_time)
 
