@@ -75,6 +75,8 @@ class PhiDataProcessor:
                 case PhiEventTypes.SPEED:  # 速度事件
                     pass  # TODO: 将流速变化转换为 current_fp 变化
 
+        events.sort(key=lambda x: x["startTime"])
+
         return deque(events)
 
     @staticmethod
