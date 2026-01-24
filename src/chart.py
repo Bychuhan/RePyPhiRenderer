@@ -59,6 +59,8 @@ class PhiDataConverter:
 class PhiDataProcessor:
     @staticmethod
     def init_events(bpm: float, events: list, type: Literal[0, 1, 2, 3]) -> deque:
+        events.sort(key=lambda x: x["startTime"])
+
         for event in events:
             event["startTime"] = PhiDataConverter.tick_to_sec(
                 bpm, event["startTime"])
@@ -74,8 +76,6 @@ class PhiDataProcessor:
 
                 case PhiEventTypes.SPEED:  # 速度事件
                     pass  # TODO: 将流速变化转换为 current_fp 变化
-
-        events.sort(key=lambda x: x["startTime"])
 
         return deque(events)
 
