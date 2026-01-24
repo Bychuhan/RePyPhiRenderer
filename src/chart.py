@@ -59,8 +59,6 @@ class PhiDataConverter:
 class PhiDataProcessor:
     @staticmethod
     def init_events(bpm: float, events: list, type: Literal[0, 1, 2, 3]) -> deque:
-        events
-
         for event in events:
             event["startTime"] = PhiDataConverter.tick_to_sec(
                 bpm, event["startTime"])
