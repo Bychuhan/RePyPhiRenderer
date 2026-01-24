@@ -25,7 +25,6 @@ class Player:
         self.music: musicCls = musicCls()
         self.loaded_music = False
 
-        self.illustration: Image.Image = None
         self.loaded_illustration = False
 
         self.timer = Timer()
@@ -67,26 +66,25 @@ class Player:
             return
 
         try:
-            self.illustration = Image.open(
+            with Image.open(
                 BytesIO(illustration) if isinstance(illustration, bytes) else
                 illustration
-            )
+            ) as image:
+                image = image.convert("RGBA")
+                image = image.filter(
+                    ImageFilter.GaussianBlur(self.config.illustration_blurriness))
 
-            self.illustration = self.illustration.convert("RGBA")
-            self.illustration = self.illustration.filter(
-                ImageFilter.GaussianBlur(self.config.illustration_blurriness))
+                scale = max(
+                    self.config.width / image.width,
+                    self.config.height / image.height
+                )
+                image = image.resize((
+                    math.ceil(image.width * scale),
+                    math.ceil(image.height * scale)
+                ))
 
-            scale = max(
-                self.config.width / self.illustration.width,
-                self.config.height / self.illustration.height
-            )
-            self.illustration = self.illustration.resize((
-                math.ceil(self.illustration.width * scale),
-                math.ceil(self.illustration.height * scale)
-            ))
-
-            renderer.texture_manager.create_texture(
-                renderer.ctx, "illustration", self.illustration, TextureCreateTypes.IMAGE)
+                renderer.texture_manager.create_texture(
+                    renderer.ctx, "illustration", image, TextureCreateTypes.IMAGE)
         except Exception as e:
             logger.warning(f"曲绘加载失败: {e}")
 
