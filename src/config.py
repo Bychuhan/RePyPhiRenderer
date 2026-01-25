@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Type, Callable
 
-from arg_specs import *
+from .arg_specs import *
 
 
 @dataclass

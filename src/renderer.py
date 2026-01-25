@@ -2,9 +2,9 @@ import os
 
 import moderngl as mgl
 
-from config import *
-from shader import *
-from texture import *
+from .config import *
+from .shader import *
+from .texture import *
 
 
 class Renderer:

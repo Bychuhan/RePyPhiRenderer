@@ -2,7 +2,7 @@ import pygame
 import moderngl as mgl
 
 
-from renderer import *
+from .renderer import *
 
 
 class Window:

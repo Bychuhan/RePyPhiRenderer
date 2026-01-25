@@ -4,10 +4,10 @@ from tkinter.filedialog import askopenfilename
 
 import pygame
 
-from window import *
-from arg_specs import *
-from config import *
-from player import *
+from .window import *
+from .arg_specs import *
+from .config import *
+from .player import *
 
 
 class PyPR:

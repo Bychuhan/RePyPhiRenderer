@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Literal
 import time
 
-import dxsound
+from . import dxsound
 
 
 class musicCls:

@@ -5,11 +5,11 @@ import math
 from loguru import logger
 from PIL import Image, ImageFilter
 
-from config import *
-from chart import *
-from timer import *
-from dxsmixer import *
-from texture import TextureCreateTypes
+from .config import *
+from .chart import *
+from .timer import *
+from .dxsmixer import *
+from .texture import TextureCreateTypes
 
 
 class Player:

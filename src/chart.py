@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Literal
 from abc import ABC, abstractmethod
 from enum import IntEnum
@@ -5,9 +7,9 @@ from collections import deque
 
 from loguru import logger
 
-from utils import linear_interpolation
-from renderer import Renderer
-from config import Config
+from .utils import linear_interpolation
+from .renderer import Renderer
+from .config import Config
 
 
 class Chart(ABC):
@@ -34,6 +36,13 @@ class PhiEventTypes(IntEnum):
     SPEED = 3
 
 
+class PhiNoteTypes(IntEnum):
+    TAP = 1
+    DRAG = 2
+    HOLD = 3
+    FLICK = 4
+
+
 class PhiDataConverter:
     width: int
     height: int
@@ -48,6 +57,10 @@ class PhiDataConverter:
         return (x - 0.5) * PhiDataConverter.width, (y - 0.5) * PhiDataConverter.height
 
     @staticmethod
+    def convert_speed_event_value(value: float):
+        return 0.6 * PhiDataConverter.height * value
+
+    @staticmethod
     def tick_to_sec(bpm: float, tick: int | float):
         return 1.875 / bpm * tick
 
@@ -59,6 +72,8 @@ class PhiDataConverter:
 class PhiDataProcessor:
     @staticmethod
     def init_events(bpm: float, events: list, type: Literal[0, 1, 2, 3]) -> deque:
+        floor_position = 0  # 速度事件用
+
         events.sort(key=lambda x: x["startTime"])
 
         for event in events:
@@ -75,9 +90,67 @@ class PhiDataProcessor:
                         event["end"], event["end2"])
 
                 case PhiEventTypes.SPEED:  # 速度事件
-                    pass  # TODO: 将流速变化转换为 current_fp 变化
+                    event["start"] = floor_position
+
+                    event["value"] = PhiDataConverter.convert_speed_event_value(
+                        event["value"])
+
+                    event_floor_position = (event["value"] *
+                                            (event["endTime"] - event["startTime"]))
+
+                    end_floor_position = floor_position + event_floor_position
+
+                    event["end"] = end_floor_position
+                    floor_position = end_floor_position
 
         return deque(events)
+
+    @staticmethod
+    def get_floor_position(time: float, speed_events: deque):
+        left, right = 0, len(speed_events) - 1
+
+        while left <= right:
+            mid = left + (right - left) // 2
+            event = speed_events[mid]
+
+            if event["startTime"] <= time < event["endTime"]:
+                progress = ((time - event["startTime"]) /
+                            (event["endTime"] - event["startTime"]))
+                return linear_interpolation(event["startTime"], event["endTime"], progress)
+
+            elif time < event["startTime"]:
+                right = mid - 1
+
+            else:
+                left = mid + 1
+
+        return 0
+
+    @staticmethod
+    def init_notes(bpm: float, speed_events: deque, above_notes: list, below_notes: list) -> list[list[PhiNote]]:
+        [i.update({"above": 1}) for i in above_notes]
+        [i.update({"above": -1}) for i in below_notes]
+        all_notes = above_notes + below_notes
+
+        for note in all_notes:
+            note["time"] = PhiDataConverter.tick_to_sec(bpm, note["time"])
+            note["positionX"] = (
+                PhiDataConverter.convert_note_x_pos(note["positionX"]))
+            note["holdTime"] = PhiDataConverter.tick_to_sec(bpm, note["time"])
+            note["floorPosition"] = PhiDataProcessor.get_floor_position(
+                note["time"], speed_events)
+
+            note["visible"] = True
+
+            if note["type"] == PhiNoteTypes.HOLD:
+                note["holdSpeed"] = note["speed"]
+                note["speed"] = 1
+
+                note["endTime"] = note["time"] + note["holdTime"]
+                note["length"] = (note["holdTime"] *
+                                  PhiDataConverter.convert_speed_event_value(note["holdSpeed"]))
+
+                note["visible"] = bool(note["length"])
 
     @staticmethod
     def update_events(events: deque, type: Literal[0, 1, 2, 3], now_time: float) -> float | tuple[float, float]:
@@ -121,6 +194,10 @@ class PhiLine:
         self.speed_events = PhiDataProcessor.init_events(
             self.bpm, data["speedEvents"], PhiEventTypes.SPEED)
 
+        self.notes = PhiDataProcessor.init_notes(
+            self.bpm, self.speed_events, data["notesAbove"], data["notesBelow"]
+        )
+
         self.x_pos: float = 0
         self.y_pos: float = 0
         self.rotate: float = 0
@@ -145,6 +222,26 @@ class PhiLine:
         if self.opacity > 0:
             renderer.render_rect(x=self.x_pos, y=self.y_pos, w=self.width, h=self.height, r=self.rotate,
                                  color=(*self.rgb_color, self.opacity), anchor=(0.5, 0.5))
+
+
+class PhiNote:
+    def __init__(self, data: dict):
+        self.time = data["time"]
+        self.x_pos = data["positionX"]
+        self.floor_position = data["floorPosition"]
+
+        self.is_visible = data["visible"]
+
+        self.hold_time = 0
+        self.hold_speed = 1
+        self.end_time = self.time
+        self.length = 0
+
+        if self.type == PhiNoteTypes.HOLD:
+            self.hold_time = data["holdTime"]
+            self.hold_speed = data["holdSpeed"]
+            self.end_time = data["endTime"]
+            self.length = data["length"]
 
 
 class PhiChart(Chart):
