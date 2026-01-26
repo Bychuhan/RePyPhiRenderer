@@ -14,3 +14,26 @@
 
 ## 致谢
 - 音频播放代码修改自 [qaqFei/phispler](https://github.com/qaqFei/phispler/) ( MIT )
+
+## 运行
+确保你有安装 [Git](https://git-scm.com/install/) 和 [Python](https://www.python.org/downloads/) 。
+
+- Python 版本: 3.13+
+- 操作系统：Windows 10+
+
+1. **克隆仓库**
+```shell
+git clone https://github.com/Bychuhan/RePyPhiRenderer.git
+cd RePyPhiRenderer
+```
+
+2. **安装依赖库**
+```shell
+pip install uv
+uv sync
+```
+
+3. **运行**
+```shell
+uv run python -m src.main
+```
