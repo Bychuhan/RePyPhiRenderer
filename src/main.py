@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     root = Tk()
     root.withdraw()
-    root.attributes('-topmost', True)
+    root.attributes("-topmost", True)
 
     app.import_chart_by_path(askopenfilename(
         title="请选择谱面文件",

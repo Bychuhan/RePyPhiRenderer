@@ -25,7 +25,7 @@ def _loadDirectSound(data: bytes):
     sdesc = ds.DSBUFFERDESC()
 
     with BytesIO(data) as bio:
-        audio_data, samplerate = sf.read(bio, dtype='float32')
+        audio_data, samplerate = sf.read(bio, dtype="float32")
 
         audio_data = np.clip(audio_data, -1, 1)
         audio_data = (audio_data * 32767).astype(np.int16)
