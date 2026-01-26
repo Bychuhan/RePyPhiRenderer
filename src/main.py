@@ -1,6 +1,5 @@
 import sys
 import json
-from tkinter.filedialog import askopenfilename
 
 import pygame
 
@@ -82,6 +81,8 @@ class PyPR:
 
 
 if __name__ == "__main__":
+    from tkinter.filedialog import askopenfilename
+
     args = ArgParser.parse(sys.argv, aliases=ARG_ALIASES,
                            type_hints=ARG_TYPE_HINTS)
 
