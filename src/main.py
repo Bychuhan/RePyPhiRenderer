@@ -82,15 +82,38 @@ class PyPR:
 
 if __name__ == "__main__":
     from tkinter.filedialog import askopenfilename
+    from tkinter import Tk
 
     args = ArgParser.parse(sys.argv, aliases=ARG_ALIASES,
                            type_hints=ARG_TYPE_HINTS)
 
     app = PyPR(args=args)
 
-    # TODO: 设置选择文件对话框置顶与对话框参数
-    app.import_chart_by_path(askopenfilename())
-    app.import_music(askopenfilename())
-    app.import_illustration(askopenfilename())
+    root = Tk()
+    root.withdraw()
+    root.attributes('-topmost', True)
+
+    app.import_chart_by_path(askopenfilename(
+        title="请选择谱面文件",
+        filetypes=(
+            ("JSON 文件", "*.json"),
+            ("所有文件", "*.*"),
+        )))
+
+    app.import_music(askopenfilename(
+        title="请选择音乐文件",
+        filetypes=(
+            ("音频文件", "*.mp3 *.ogg *.wav"),
+            ("所有文件", "*.*"),
+        )))
+
+    app.import_illustration(askopenfilename(
+        title="请选择曲绘文件",
+        filetypes=(
+            ("音频文件", "*.png *.jpg *.jpeg *.gif"),
+            ("所有文件", "*.*"),
+        )))
+
+    root.destroy()
 
     app.main_loop()
