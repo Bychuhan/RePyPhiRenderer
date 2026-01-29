@@ -53,7 +53,11 @@ class Player:
             self.music.load(music)
             self.loaded_music = True
         except Exception as e:
+            import traceback
+
             logger.warning(f"音乐加载失败: {e}")
+
+            logger.warning(traceback.format_exc())
 
             return
 
@@ -86,7 +90,11 @@ class Player:
                 renderer.texture_manager.create_texture(
                     renderer.ctx, "illustration", image, TextureCreateTypes.IMAGE)
         except Exception as e:
+            import traceback
+
             logger.warning(f"曲绘加载失败: {e}")
+
+            logger.warning(traceback.format_exc())
 
             return
 

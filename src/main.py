@@ -44,7 +44,11 @@ class PyPR:
             try:
                 self.player.load_chart(json.load(f), self.config)
             except Exception as e:
+                import traceback
+
                 logger.error(f"谱面导入失败: {e}")
+
+                logger.error(traceback.format_exc())
 
                 sys.exit()
 
