@@ -11,9 +11,14 @@ ARG_ALIASES: dict[str, str] = {
 ARG_TYPE_HINTS: dict[str, Type] = {
     "width": int,
     "height": int,
+
     "resources_dir": str,
+
     "illustration_blurriness": float,
-    "illustration_brightness": float
+    "illustration_brightness": float,
+
+    "render": bool,
+    "video_output_path": str
 }
 
 # 参数类型转换器

@@ -14,6 +14,9 @@ class Config:
     illustration_blurriness: float = 80.0
     illustration_brightness: float = 0.1
 
+    render: bool = False
+    video_output_path: str = "output.mp4"
+
 
 class ArgParser:
     @staticmethod
