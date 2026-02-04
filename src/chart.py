@@ -242,6 +242,10 @@ class PhiLine:
         self.opacity: float = 0
         self.floor_position: float = 0
 
+        self.last_processed_note_indices: list[int] = (
+            [0] * len(self.note_groups))  # 最后处理的 Note 索引列表
+        self.note_floor_position_threshold: int = 2 * config.height  # Note break 的 fp 阈值
+
         self.width = 5.76 * config.height
         self.height = 0.0075 * config.height
         # TODO: 从资源配置文件读取判定线颜色
@@ -258,6 +262,39 @@ class PhiLine:
             self.opacity_events, PhiEventTypes.OPACITY, now_time)
         self.floor_position = PhiDataProcessor.update_events(
             self.speed_events, PhiEventTypes.SPEED, now_time)
+
+    def update_notes(self, now_time: float):
+        for group_index, notes in enumerate(self.note_groups):
+            self.last_processed_note_indices[group_index] = -1
+
+            note_index = -1
+
+            for note in notes.copy():
+                note_index += 1
+
+                result = note.update(now_time, self)
+
+                if result == NoteResultCode.HIT:
+                    notes.remove(note)
+
+                    note_index -= 1  # 由于 Notes 被删除一项，index 应减 1
+
+                    continue
+
+                if result == NoteResultCode.BREAK:
+                    break
+
+                self.last_processed_note_indices[group_index] = note_index
+
+    def render_notes(self, renderer: Renderer):
+        for group_index, notes in enumerate(self.note_groups):
+            last_processed_note_index = self.last_processed_note_indices[group_index]
+
+            for note_index, note in enumerate(notes.copy()):
+                if note_index > last_processed_note_index:
+                    break
+
+                note.render(renderer)
 
     def render(self, renderer: Renderer):
         if self.opacity > 0:
@@ -338,9 +375,15 @@ class PhiChart(Chart):
         for line in self.lines:
             line.update(now_time)
 
+        for line in self.lines:
+            line.update_notes(now_time)
+
     def render(self, renderer: Renderer):
         for line in self.lines:
             line.render(renderer)
+
+        for line in self.lines:
+            line.render_notes(renderer)
 
 
 class ChartParser:
