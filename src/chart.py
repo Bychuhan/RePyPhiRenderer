@@ -410,7 +410,7 @@ class ChartParser:
                 line_objs = [PhiLine(line, config, index=index)
                              for index, line in enumerate(lines)]
 
-                logger.info(f"#lines: {len(lines)}")
+                logger.info(f"#lines: {len(line_objs)}")
 
                 result_chart = PhiChart(format_version, offset, line_objs)
 
