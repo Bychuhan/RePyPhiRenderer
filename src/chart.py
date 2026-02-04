@@ -97,6 +97,27 @@ class PhiDataProcessor:
         return deque(events)
 
     @staticmethod
+    def get_floor_position(time: float, speed_events: deque):
+        left, right = 0, len(speed_events) - 1
+
+        while left <= right:
+            mid = left + (right - left) // 2
+            event = speed_events[mid]
+
+            if event["startTime"] <= time <= event["endTime"]:
+                progress = ((time - event["startTime"]) /
+                            (event["endTime"] - event["startTime"]))
+                return linear_interpolation(event["start"], event["end"], progress)
+
+            elif time < event["startTime"]:
+                right = mid - 1
+
+            else:
+                left = mid + 1
+
+        return 0
+
+    @staticmethod
     def update_events(events: deque, type: Literal[0, 1, 2, 3], now_time: float) -> float | tuple[float, float]:
         now_event = events[0]
 
