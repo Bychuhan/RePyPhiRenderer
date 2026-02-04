@@ -5,7 +5,6 @@ from collections import deque
 
 from loguru import logger
 
-from .utils import linear_interpolation
 from .renderer import Renderer
 from .config import Config
 from .utils import *
