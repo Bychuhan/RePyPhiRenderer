@@ -16,6 +16,9 @@ class Config:
 
     render: bool = False
     video_output_path: str = "output.mp4"
+    encoder: str = "libx264"
+    video_fps: int = 60
+    video_bitrate: str = "15000k"
 
 
 class ArgParser:

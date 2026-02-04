@@ -18,7 +18,10 @@ ARG_TYPE_HINTS: dict[str, Type] = {
     "illustration_brightness": float,
 
     "render": bool,
-    "video_output_path": str
+    "video_output_path": str,
+    "encoder": str,
+    "video_fps": int,
+    "video_bitrate": str
 }
 
 # 参数类型转换器
