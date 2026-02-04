@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Literal
 from abc import ABC, abstractmethod
 from enum import IntEnum
@@ -125,6 +127,57 @@ class PhiDataProcessor:
         return 0
 
     @staticmethod
+    def group_notes(notes: deque[dict[str, PhiNote]]) -> deque[deque[PhiNote]]:
+        groups: dict[float, deque[dict[str, PhiNote]]] = {}
+
+        for note in notes:
+            if not note.speed in groups:
+                groups[note.speed] = deque()
+
+            groups[note.speed].append(note)
+
+        # 将字典转换为二维队列
+        grouped_notes = [value for value in groups.values()]
+
+        return grouped_notes
+
+    @staticmethod
+    def init_notes(bpm: float, speed_events: deque, above_notes: list, below_notes: list) -> deque[deque[PhiNote]]:
+        [i.update({"isAbove": 1}) for i in above_notes]
+        [i.update({"isAbove": -1}) for i in below_notes]
+        all_notes: list[dict[str, float | Any]] = above_notes + below_notes
+
+        for note in all_notes:
+            note["time"] = PhiDataConverter.tick_to_sec(bpm, note["time"])
+            note["positionX"] = (
+                PhiDataConverter.convert_note_x_pos(note["positionX"]))
+            note["holdTime"] = PhiDataConverter.tick_to_sec(bpm, note["time"])
+            note["floorPosition"] = PhiDataProcessor.get_floor_position(
+                note["time"], speed_events)
+
+            note["visible"] = True
+
+            if note["type"] == PhiNoteTypes.HOLD:
+                note["holdSpeed"] = note["speed"]
+                note["speed"] = 1
+
+                note["endTime"] = note["time"] + note["holdTime"]
+                note["length"] = (note["holdTime"] *
+                                  PhiDataConverter.convert_speed_event_value(note["holdSpeed"]))
+
+                note["visible"] = bool(note["length"])
+
+        # 按 floorPosition 排序以处理部分特殊情况
+        all_notes.sort(key=lambda note: note["floorPosition"])
+
+        note_objs: list[PhiNote] = [PhiNote(note) for note in all_notes]
+
+        # 按 speed 分组以处理部分特殊情况
+        grouped_notes = PhiDataProcessor.group_notes(deque(note_objs))
+
+        return grouped_notes
+
+    @staticmethod
     def update_events(events: deque, type: Literal[0, 1, 2, 3], now_time: float) -> float | tuple[float, float]:
         now_event = events[0]
 
@@ -172,6 +225,16 @@ class PhiLine:
             self.bpm, data["judgeLineDisappearEvents"], PhiEventTypes.OPACITY)
         self.speed_events = PhiDataProcessor.init_events(
             self.bpm, data["speedEvents"], PhiEventTypes.SPEED)
+
+        self.note_groups = PhiDataProcessor.init_notes(
+            self.bpm, self.speed_events, data["notesAbove"], data["notesBelow"]
+        )
+        # 计算此判定线的总 Note 数
+        self.note_num = len([item for row in self.note_groups for item in row])
+
+        logger.info(f"已加载 {self.index} 号判定线的 Note")
+        logger.info(
+            f"#notes({self.index}): {self.note_num} ({len(self.note_groups)} groups)")
 
         self.x_pos: float = 0
         self.y_pos: float = 0
