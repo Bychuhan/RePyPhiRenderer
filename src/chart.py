@@ -34,6 +34,13 @@ class PhiEventTypes(IntEnum):
     SPEED = 3
 
 
+class PhiNoteTypes(IntEnum):
+    TAP = 1
+    DRAG = 2
+    HOLD = 3
+    FLICK = 4
+
+
 class PhiDataConverter:
     width: int
     height: int
