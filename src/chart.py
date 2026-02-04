@@ -411,6 +411,7 @@ class ChartParser:
                              for index, line in enumerate(lines)]
 
                 logger.info(f"#lines: {len(line_objs)}")
+                logger.info(f"#notes: {sum([line.note_num for line in line_objs])}")
 
                 result_chart = PhiChart(format_version, offset, line_objs)
 
