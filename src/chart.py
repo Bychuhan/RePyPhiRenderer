@@ -202,6 +202,66 @@ class PhiLine:
                                  color=(*self.rgb_color, self.opacity), anchor=(0.5, 0.5))
 
 
+class PhiNote:
+    def __init__(self, data: dict):
+        self.type = data["type"]
+        self.time = data["time"]
+        self.x_pos = data["positionX"]
+        self.floor_position = data["floorPosition"]
+        self.speed = data["speed"]
+        self.is_above = data["isAbove"]
+
+        self.is_visible = data["visible"]
+
+        self.hold_time = 0
+        self.hold_speed = 1
+        self.end_time = self.time
+        self.length = 0
+
+        self.now_x: float = 0
+        self.now_y: float = 0
+        self.now_rotate: float = 0
+        self.now_floor_position: float = self.floor_position
+
+        if self.type == PhiNoteTypes.HOLD:
+            self.hold_time = data["holdTime"]
+            self.hold_speed = data["holdSpeed"]
+            self.end_time = data["endTime"]
+            self.length = data["length"]
+
+    def update(self, now_time: float, parent_line: PhiLine) -> Literal[0, 1, 2]:
+        if now_time >= self.time:
+            self.now_x, self.now_y = rotate_translate(
+                parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, 0)
+
+            return NoteResultCode.HIT
+
+        self.now_floor_position = self.floor_position - parent_line.floor_position
+        self.now_floor_position *= self.speed
+
+        if self.now_floor_position > parent_line.note_floor_position_threshold:
+            return NoteResultCode.BREAK
+
+        read_floor_position = self.now_floor_position * self.is_above
+
+        self.now_x, self.now_y = rotate_translate(
+            parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, read_floor_position)
+        self.now_rotate = parent_line.rotate
+
+        return NoteResultCode.OK
+
+    def render(self, renderer: Renderer):
+        if self.now_floor_position < -0.0001:
+            return
+
+        if self.type == PhiNoteTypes.HOLD and self.length == 0:
+            return
+
+        renderer.render_rect(
+            self.now_x, self.now_y, 50, 20, self.now_rotate
+        )
+
+
 class PhiChart(Chart):
     def __init__(self, format_version: Literal[3], offset: float, lines: list[PhiLine]):
         self.format_version = format_version
