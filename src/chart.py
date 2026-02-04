@@ -48,6 +48,10 @@ class PhiDataConverter:
         return (x - 0.5) * PhiDataConverter.width, (y - 0.5) * PhiDataConverter.height
 
     @staticmethod
+    def convert_speed_event_value(value: float):
+        return 0.6 * PhiDataConverter.height * value
+
+    @staticmethod
     def tick_to_sec(bpm: float, tick: int | float):
         return 1.875 / bpm * tick
 
@@ -59,6 +63,8 @@ class PhiDataConverter:
 class PhiDataProcessor:
     @staticmethod
     def init_events(bpm: float, events: list, type: Literal[0, 1, 2, 3]) -> deque:
+        floor_position: float = 0  # 速度事件用
+
         events.sort(key=lambda x: x["startTime"])
 
         for event in events:
@@ -75,7 +81,18 @@ class PhiDataProcessor:
                         event["end"], event["end2"])
 
                 case PhiEventTypes.SPEED:  # 速度事件
-                    pass  # TODO: 将流速变化转换为 current_fp 变化
+                    event["start"] = floor_position
+
+                    event["value"] = PhiDataConverter.convert_speed_event_value(
+                        event["value"])
+
+                    event_floor_position = (event["value"] *
+                                            (event["endTime"] - event["startTime"]))
+
+                    end_floor_position = floor_position + event_floor_position
+
+                    event["end"] = end_floor_position
+                    floor_position = end_floor_position
 
         return deque(events)
 
@@ -125,6 +142,7 @@ class PhiLine:
         self.y_pos: float = 0
         self.rotate: float = 0
         self.opacity: float = 0
+        self.floor_position: float = 0
 
         self.width = 5.76 * config.height
         self.height = 0.0075 * config.height
@@ -140,6 +158,8 @@ class PhiLine:
             self.rotate_events, PhiEventTypes.ROTATE, now_time)
         self.opacity = PhiDataProcessor.update_events(
             self.opacity_events, PhiEventTypes.OPACITY, now_time)
+        self.floor_position = PhiDataProcessor.update_events(
+            self.speed_events, PhiEventTypes.SPEED, now_time)
 
     def render(self, renderer: Renderer):
         if self.opacity > 0:
