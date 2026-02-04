@@ -151,6 +151,13 @@ class PhiDataProcessor:
             return PhiDataProcessor.update_events(events, type, now_time)
 
 
+# 更新 Note 时返回码枚举
+class NoteResultCode(IntEnum):
+    OK = 0
+    HIT = 1
+    BREAK = 2
+
+
 class PhiLine:
     def __init__(self, data: dict[str, Any], config: Config, index: int = 0):
         self.index = index  # 调试与 log 用
