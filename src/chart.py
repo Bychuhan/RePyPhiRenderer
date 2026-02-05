@@ -160,7 +160,8 @@ class PhiDataProcessor:
             note["time"] = PhiDataConverter.tick_to_sec(bpm, note["time"])
             note["positionX"] = (
                 PhiDataConverter.convert_note_x_pos(note["positionX"]))
-            note["holdTime"] = PhiDataConverter.tick_to_sec(bpm, note["holdTime"])
+            note["holdTime"] = PhiDataConverter.tick_to_sec(
+                bpm, note["holdTime"])
             note["floorPosition"] = PhiDataProcessor.get_floor_position(
                 note["time"], speed_events)
 
