@@ -15,6 +15,8 @@
 > 本项目**仅供研究学习目的**，请勿用于**商业用途**或**侵犯官方权益**的行为。  
 > 本项目**不包含** Phigros 的官方游戏资源。任何**资源滥用**行为**与本项目无关**。
 
+文档仓库: [pypr-docs](https://github.com/Bychuhan/pypr-docs)
+
 ## 致谢
 - 音频播放代码修改自 [qaqFei/phispler](https://github.com/qaqFei/phispler/) ( MIT )
 
