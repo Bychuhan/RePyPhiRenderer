@@ -355,10 +355,10 @@ class PhiNote:
         if self.now_floor_position > parent_line.note_floor_position_threshold:
             return NoteResultCode.BREAK
 
-        read_floor_position = self.now_floor_position * self.is_above
+        real_floor_position = self.now_floor_position * self.is_above
 
         self.now_x, self.now_y = rotate_translate(
-            parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, read_floor_position)
+            parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, real_floor_position)
         self.now_rotate = parent_line.rotate
 
         return NoteResultCode.OK
