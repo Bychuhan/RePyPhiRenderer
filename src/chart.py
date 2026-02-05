@@ -364,9 +364,10 @@ class PhiNote:
         return NoteResultCode.OK
 
     def render(self, renderer: Renderer):
-        if self.now_floor_position < -0.0001:
+        if self.now_floor_position < -0.0001:  # 遮罩逻辑，-0.0001 防止误差
             return
 
+        # 长条初始长度为 0 时不渲染 ( 初始长度不为 0 但当前长度为 0 仍然会正常渲染长条尾 )
         if self.type == PhiNoteTypes.HOLD and self.length == 0:
             return
 
