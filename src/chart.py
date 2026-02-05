@@ -348,9 +348,9 @@ class PhiNote:
             sound_manager.play_sound(self.hitsound_name)
 
             return NoteResultCode.HIT
-
-        self.now_floor_position = ((self.floor_position - parent_line.floor_position)
-                                   * self.speed)
+        else:
+            self.now_floor_position = ((self.floor_position - parent_line.floor_position)
+                                       * self.speed)
 
         if self.now_floor_position > parent_line.note_floor_position_threshold:
             return NoteResultCode.BREAK
