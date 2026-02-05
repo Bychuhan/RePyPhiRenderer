@@ -10,6 +10,7 @@ from loguru import logger
 from .renderer import Renderer
 from .config import Config
 from .utils import *
+from .sound_manager import SoundManager
 
 
 class Chart(ABC):
@@ -21,7 +22,7 @@ class Chart(ABC):
         pass
 
     @abstractmethod
-    def update(self, now_time: float):
+    def update(self, now_time: float, sound_manager: SoundManager):
         pass
 
     @abstractmethod
@@ -41,6 +42,14 @@ class PhiNoteTypes(IntEnum):
     DRAG = 2
     HOLD = 3
     FLICK = 4
+
+
+PHI_NOTE_HITSOUNDS = {
+    PhiNoteTypes.TAP: "hitsound-tap",
+    PhiNoteTypes.DRAG: "hitsound-drag",
+    PhiNoteTypes.HOLD: "hitsound-tap",
+    PhiNoteTypes.FLICK: "hitsound-flick"
+}
 
 
 class PhiDataConverter:
@@ -263,7 +272,7 @@ class PhiLine:
         self.floor_position = PhiDataProcessor.update_events(
             self.speed_events, PhiEventTypes.SPEED, now_time)
 
-    def update_notes(self, now_time: float):
+    def update_notes(self, now_time: float, sound_manager: SoundManager):
         for group_index, notes in enumerate(self.note_groups):
             self.last_processed_note_indices[group_index] = -1
 
@@ -272,7 +281,7 @@ class PhiLine:
             for note in notes.copy():
                 note_index += 1
 
-                result = note.update(now_time, self)
+                result = note.update(now_time, self, sound_manager)
 
                 if result == NoteResultCode.HIT:
                     notes.remove(note)
@@ -329,10 +338,14 @@ class PhiNote:
             self.end_time = data["endTime"]
             self.length = data["length"]
 
-    def update(self, now_time: float, parent_line: PhiLine) -> Literal[0, 1, 2]:
+        self.hitsound_name = PHI_NOTE_HITSOUNDS[self.type]
+
+    def update(self, now_time: float, parent_line: PhiLine, sound_manager: SoundManager) -> Literal[0, 1, 2]:
         if now_time >= self.time:
             self.now_x, self.now_y = rotate_translate(
                 parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, 0)
+
+            sound_manager.play_sound(self.hitsound_name)
 
             return NoteResultCode.HIT
 
@@ -371,12 +384,12 @@ class PhiChart(Chart):
     def to_chart_time(self, now_time: float) -> float:
         return now_time - self.offset
 
-    def update(self, now_time: float):
+    def update(self, now_time: float, sound_manager: SoundManager):
         for line in self.lines:
             line.update(now_time)
 
         for line in self.lines:
-            line.update_notes(now_time)
+            line.update_notes(now_time, sound_manager)
 
     def render(self, renderer: Renderer):
         for line in self.lines:

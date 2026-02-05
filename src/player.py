@@ -1,6 +1,7 @@
 from typing import Any
 from io import BytesIO
 import math
+import os
 
 from loguru import logger
 from PIL import Image, ImageFilter
@@ -10,6 +11,7 @@ from .chart import *
 from .timer import *
 from .dxsmixer import *
 from .texture import TextureCreateTypes
+from .sound_manager import *
 
 
 class Player:
@@ -27,10 +29,15 @@ class Player:
 
         self.loaded_illustration = False
 
+        self.sound_manager = SoundManager()
+
         self.timer = Timer()
         self.timer.reset()
 
         PhiDataConverter.init(config.width, config.height)
+
+        self._load_note_sounds()
+        logger.info("已加载 Note 音效")
 
     def load_chart(self, chart: dict | Any, config: Config):
         self.chart = ChartParser.parse(chart, config)
@@ -113,6 +120,14 @@ class Player:
         renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
                              color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
 
+    def _load_note_sounds(self):
+        self.sound_manager.create_sound(
+            "hitsound-tap", os.path.join(self.config.resources_dir, "sounds/tap.ogg"))
+        self.sound_manager.create_sound(
+            "hitsound-flick", os.path.join(self.config.resources_dir, "sounds/flick.ogg"))
+        self.sound_manager.create_sound(
+            "hitsound-drag", os.path.join(self.config.resources_dir, "sounds/drag.ogg"))
+
     def start(self):
         if not self.loaded_chart:
             logger.warning("未导入谱面文件，无法开始播放")
@@ -136,5 +151,5 @@ class Player:
         if self.loaded_illustration:
             self.render_illustration(renderer)
 
-        self.chart.update(chart_time)
+        self.chart.update(chart_time, self.sound_manager)
         self.chart.render(renderer)
