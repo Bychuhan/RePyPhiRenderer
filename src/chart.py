@@ -405,7 +405,7 @@ class PhiNote:
 
             # 长条身
             renderer.render_rect(self.now_x, self.now_y, 50,
-                                 self.now_length, self.now_rotate, anchor=(0.5, 0))
+                                 self.now_length * self.is_above, self.now_rotate, anchor=(0.5, 0))
 
             # 长条尾
             renderer.render_rect(self.now_end_x, self.now_end_y,
