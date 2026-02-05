@@ -167,12 +167,11 @@ class PhiDataProcessor:
             note["visible"] = True
 
             if note["type"] == PhiNoteTypes.HOLD:
-                note["holdSpeed"] = note["speed"]
+                note["holdSpeed"] = PhiDataConverter.convert_speed_event_value(note["speed"])
                 note["speed"] = 1
 
                 note["endTime"] = note["time"] + note["holdTime"]
-                note["length"] = (note["holdTime"] *
-                                  PhiDataConverter.convert_speed_event_value(note["holdSpeed"]))
+                note["length"] = (note["holdTime"] * note["holdSpeed"])
 
                 note["visible"] = bool(note["length"])
 
