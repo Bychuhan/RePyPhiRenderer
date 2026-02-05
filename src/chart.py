@@ -395,9 +395,25 @@ class PhiNote:
         if self.type == PhiNoteTypes.HOLD and self.length == 0:
             return
 
-        renderer.render_rect(
-            self.now_x, self.now_y, 50, 20, self.now_rotate
-        )
+        # TODO: Note 纹理
+        if self.type == PhiNoteTypes.HOLD:  # 长条渲染
+            # 长条头
+            if not self.is_hit:
+                renderer.render_rect(self.now_x, self.now_y,
+                                     50, 10, self.now_rotate, anchor=(0.5, 1))
+
+            # 长条身
+            renderer.render_rect(self.now_x, self.now_y, 50,
+                                 self.now_length, self.now_rotate, anchor=(0.5, 0))
+
+            # 长条尾
+            renderer.render_rect(self.now_end_x, self.now_end_y,
+                                 50, 10, self.now_rotate, anchor=(0.5, 0))
+
+        else:  # 其他 Note 渲染
+            renderer.render_rect(
+                self.now_x, self.now_y, 50, 20, self.now_rotate
+            )
 
 
 class PhiChart(Chart):
