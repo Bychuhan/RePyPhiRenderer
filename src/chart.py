@@ -321,6 +321,7 @@ class PhiNote:
         self.is_above = data["isAbove"]
 
         self.is_visible = data["visible"]
+        self.is_hit = False  # 是否被打击 (now_time >= start_time)
 
         self.hold_time = 0
         self.hold_speed = 1
@@ -335,30 +336,53 @@ class PhiNote:
 
         self.now_x: float = 0
         self.now_y: float = 0
+        self.now_end_x: float = 0
+        self.now_end_y: float = 0
         self.now_rotate: float = 0
         self.now_floor_position: float = self.floor_position
+        self.now_end_floor_position: float = self.floor_position
+        self.now_length = self.length
 
         self.hitsound_name = PHI_NOTE_HITSOUNDS[self.type]
 
     def update(self, now_time: float, parent_line: PhiLine, sound_manager: SoundManager) -> Literal[0, 1, 2]:
         if now_time >= self.time:
-            self.now_x, self.now_y = rotate_translate(
-                parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, 0)
+            if not self.is_hit:
 
-            sound_manager.play_sound(self.hitsound_name)
+                sound_manager.play_sound(self.hitsound_name)
 
-            return NoteResultCode.HIT
+                self.is_hit = True
+
+            if self.type == PhiNoteTypes.HOLD and now_time <= self.end_time:  # 长条长按期间判断
+                now_hold_time = now_time - self.time
+
+                self.now_length = self.length - now_hold_time * self.hold_speed
+
+                self.now_floor_position = 0  # 强制将当前 fp 设为 0 以确保长条在判定线上
+                self.now_end_floor_position = self.now_length
+            else:
+                self.now_x, self.now_y = rotate_translate(
+                    parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, 0)
+
+                return NoteResultCode.HIT
         else:
             self.now_floor_position = ((self.floor_position - parent_line.floor_position)
                                        * self.speed)
+            self.now_end_floor_position = self.now_floor_position + self.now_length
 
         if self.now_floor_position > parent_line.note_floor_position_threshold:
             return NoteResultCode.BREAK
 
         real_floor_position = self.now_floor_position * self.is_above
+        real_end_floor_position = self.now_end_floor_position * self.is_above
 
         self.now_x, self.now_y = rotate_translate(
             parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, real_floor_position)
+
+        if self.type == PhiNoteTypes.HOLD:
+            self.now_end_x, self.now_end_y = rotate_translate(
+                parent_line.x_pos, parent_line.y_pos, parent_line.rotate, self.x_pos, real_end_floor_position)
+
         self.now_rotate = parent_line.rotate
 
         return NoteResultCode.OK
