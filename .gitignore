@@ -8,3 +8,7 @@ wheels/
 
 # 虚拟环境
 .venv
+
+# 文档相关
+node_modules
+docs/.vitepress/cache
