@@ -327,16 +327,16 @@ class PhiNote:
         self.end_time = self.time
         self.length = 0
 
-        self.now_x: float = 0
-        self.now_y: float = 0
-        self.now_rotate: float = 0
-        self.now_floor_position: float = self.floor_position
-
         if self.type == PhiNoteTypes.HOLD:
             self.hold_time = data["holdTime"]
             self.hold_speed = data["holdSpeed"]
             self.end_time = data["endTime"]
             self.length = data["length"]
+
+        self.now_x: float = 0
+        self.now_y: float = 0
+        self.now_rotate: float = 0
+        self.now_floor_position: float = self.floor_position
 
         self.hitsound_name = PHI_NOTE_HITSOUNDS[self.type]
 
