@@ -236,7 +236,7 @@ class PhiLine:
         self.speed_events = PhiDataProcessor.init_events(
             self.bpm, data["speedEvents"], PhiEventTypes.SPEED)
 
-        self.note_groups = PhiDataProcessor.init_notes(
+        self.note_groups: deque[deque[PhiNote]] = PhiDataProcessor.init_notes(
             self.bpm, self.speed_events, data["notesAbove"], data["notesBelow"]
         )
         # 计算此判定线的总 Note 数
