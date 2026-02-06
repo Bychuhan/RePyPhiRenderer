@@ -41,6 +41,10 @@ class Player:
         self._load_note_sounds()
         logger.info("已加载 Note 音效")
 
+        self._load_note_textures()
+        self.notes_texture_scale = self._get_note_scale()
+        logger.info("已加载 Note 纹理")
+
     def load_chart(self, chart: dict | Any, config: Config):
         self.chart = ChartParser.parse(chart, config)
 
@@ -130,6 +134,54 @@ class Player:
         self.sound_manager.create_sound(
             "hitsound-drag", os.path.join(self.config.resources_dir, "sounds/drag.ogg"))
 
+    def _load_note_textures(self):
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-tap", os.path.join(
+                self.config.resources_dir, "textures/notes/tap.png"), TextureCreateTypes.PATH
+        )
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-drag", os.path.join(
+                self.config.resources_dir, "textures/notes/drag.png"), TextureCreateTypes.PATH
+        )
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-flick", os.path.join(
+                self.config.resources_dir, "textures/notes/flick.png"), TextureCreateTypes.PATH
+        )
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-hold-bottom", os.path.join(
+                self.config.resources_dir, "textures/notes/hold-bottom.png"), TextureCreateTypes.PATH
+        )
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-hold-middle", os.path.join(
+                self.config.resources_dir, "textures/notes/hold-middle.png"), TextureCreateTypes.PATH
+        )
+        self.renderer.texture_manager.create_texture(
+            self.renderer.ctx, "note-hold-top", os.path.join(
+                self.config.resources_dir, "textures/notes/hold-top.png"), TextureCreateTypes.PATH
+        )
+
+    def _get_note_scale(self) -> dict[str, float]:
+        note_width = self.config.width * 0.123
+        note_textures = (
+            "note-tap", "note-drag", "note-flick", "note-hold-bottom", "note-hold-middle", "note-hold-top"
+        )
+        result = {}
+
+        for texture in note_textures:
+            size = self.renderer.texture_manager.get_texture_size(
+                texture, default=(1, 1))
+            width = size[0]
+
+            scale = note_width / width
+            result[texture] = scale
+
+            if texture == "note-hold-middle":
+                height = size[1]
+
+                result["hold-height-scale"] = 1 / height
+
+        return result
+
     def start(self):
         if not self.loaded_chart:
             logger.warning("未导入谱面文件，无法开始播放")
@@ -154,4 +206,4 @@ class Player:
             self.render_illustration()
 
         self.chart.update(chart_time, self.sound_manager)
-        self.chart.render(self.renderer)
+        self.chart.render(self.renderer, self.notes_texture_scale)

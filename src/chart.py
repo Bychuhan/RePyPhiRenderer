@@ -26,7 +26,7 @@ class Chart(ABC):
         pass
 
     @abstractmethod
-    def render(self, renderer: Renderer):
+    def render(self, renderer: Renderer, notes_scale: dict[str, float]):
         pass
 
 
@@ -49,6 +49,14 @@ PHI_NOTE_HITSOUNDS = {
     PhiNoteTypes.DRAG: "hitsound-drag",
     PhiNoteTypes.HOLD: "hitsound-tap",
     PhiNoteTypes.FLICK: "hitsound-flick"
+}
+
+
+PHI_NOTE_TEXTURES: dict[str, tuple[str, str | None, str | None]] = {
+    PhiNoteTypes.TAP: ("note-tap", None, None),
+    PhiNoteTypes.DRAG: ("note-drag", None, None),
+    PhiNoteTypes.HOLD: ("note-hold-middle", "note-hold-bottom", "note-hold-top"),
+    PhiNoteTypes.FLICK: ("note-flick", None, None),
 }
 
 
@@ -296,15 +304,15 @@ class PhiLine:
 
                 self.last_processed_note_indices[group_index] = note_index
 
-    def render_notes(self, renderer: Renderer):
+    def render_notes(self, renderer: Renderer, notes_scale: dict[str, float]):
         for group_index, notes in enumerate(self.note_groups):
             last_processed_note_index = self.last_processed_note_indices[group_index]
 
-            for note_index, note in enumerate(notes.copy()):
+            for note_index, note in enumerate(notes):
                 if note_index > last_processed_note_index:
                     break
 
-                note.render(renderer)
+                note.render(renderer, notes_scale)
 
     def render(self, renderer: Renderer):
         if self.opacity > 0:
@@ -345,6 +353,8 @@ class PhiNote:
         self.now_length = self.length
 
         self.hitsound_name = PHI_NOTE_HITSOUNDS[self.type]
+        self.texture_names: tuple[str, str | None,
+                                  str | None] = PHI_NOTE_TEXTURES[self.type]
 
     def update(self, now_time: float, parent_line: PhiLine, sound_manager: SoundManager) -> Literal[0, 1, 2]:
         if now_time >= self.time:
@@ -388,7 +398,7 @@ class PhiNote:
 
         return NoteResultCode.OK
 
-    def render(self, renderer: Renderer):
+    def render(self, renderer: Renderer, notes_scale: dict[str, float]):
         if self.now_floor_position < -0.0001:  # 遮罩逻辑，-0.0001 防止误差
             return
 
@@ -400,21 +410,28 @@ class PhiNote:
         if self.type == PhiNoteTypes.HOLD:  # 长条渲染
             # 长条头
             if not self.is_hit:
-                renderer.render_rect(self.now_x, self.now_y,
-                                     50, 10, self.now_rotate, anchor=(0.5, 1))
+                renderer.render_texture(self.texture_names[1], self.now_x, self.now_y,
+                                        notes_scale[self.texture_names[1]],
+                                        notes_scale[self.texture_names[1]],
+                                        self.now_rotate, anchor=(0.5, 1))
 
             # 长条身
-            renderer.render_rect(self.now_x, self.now_y, 50,
-                                 self.now_length * self.is_above, self.now_rotate, anchor=(0.5, 0))
+            renderer.render_texture(self.texture_names[0], self.now_x, self.now_y,
+                                    notes_scale[self.texture_names[0]],
+                                    notes_scale["hold-height-scale"] *
+                                    self.now_length,
+                                    self.now_rotate, anchor=(0.5, 0))
 
             # 长条尾
-            renderer.render_rect(self.now_end_x, self.now_end_y,
-                                 50, 10, self.now_rotate, anchor=(0.5, 0))
+            renderer.render_texture(self.texture_names[2], self.now_end_x, self.now_end_y,
+                                    notes_scale[self.texture_names[2]],
+                                    notes_scale[self.texture_names[2]],
+                                    self.now_rotate, anchor=(0.5, 0))
 
         else:  # 其他 Note 渲染
-            renderer.render_rect(
-                self.now_x, self.now_y, 50, 20, self.now_rotate
-            )
+            renderer.render_texture(
+                self.texture_names[0], self.now_x, self.now_y,
+                notes_scale[self.texture_names[0]], notes_scale[self.texture_names[0]], self.now_rotate)
 
 
 class PhiChart(Chart):
@@ -431,14 +448,14 @@ class PhiChart(Chart):
             line.update(now_time)
 
         for line in self.lines:
-            line.update_notes(now_time, sound_manager)
+            line.update_notes(now_time, sound_manager,)
 
-    def render(self, renderer: Renderer):
+    def render(self, renderer: Renderer, notes_scale: dict[str, float]):
         for line in self.lines:
             line.render(renderer)
 
         for line in self.lines:
-            line.render_notes(renderer)
+            line.render_notes(renderer, notes_scale)
 
 
 class ChartParser:
