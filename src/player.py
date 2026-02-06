@@ -112,15 +112,15 @@ class Player:
 
     def render_illustration(self):
         self.renderer.render_texture("illustration", x=0, y=0, sx=1, sy=1,
-                                r=0, color=(1, 1, 1, 1), anchor=(0.5, 0.5))
+                                     r=0, color=(1, 1, 1, 1), anchor=(0.5, 0.5))
 
         # 渲染背景压暗
         # 第一层-固定0.5不透明度
         self.renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
-                             color=(0, 0, 0, 0.5), anchor=(0.5, 0.5))
+                                  color=(0, 0, 0, 0.5), anchor=(0.5, 0.5))
         # 第二层-不透明度跟随配置
         self.renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
-                             color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
+                                  color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
 
     def _load_note_sounds(self):
         self.sound_manager.create_sound(
