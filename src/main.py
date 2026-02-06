@@ -29,7 +29,7 @@ class PyPR:
         self.renderer.set_blend(True)
 
         # 初始化播放器
-        self.player = Player(self.config)
+        self.player = Player(self.config, self.renderer)
 
         # 初始化变量
         self.running = True
@@ -56,7 +56,7 @@ class PyPR:
         self.player.load_music(music)
 
     def import_illustration(self, illustration: str | bytes | BytesIO):
-        self.player.load_illustration(illustration, self.renderer)
+        self.player.load_illustration(illustration)
 
     def _handle_events(self, events: list[pygame.Event]):
         for event in events:
@@ -79,7 +79,7 @@ class PyPR:
             # 渲染画面
             self.renderer.clear()
 
-            self.player.update(self.renderer)
+            self.player.update()
 
             pygame.display.flip()
 

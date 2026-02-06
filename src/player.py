@@ -15,7 +15,7 @@ from .sound_manager import *
 
 
 class Player:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, renderer: Renderer):
         self.config = config
 
         self.width = config.width
@@ -33,6 +33,8 @@ class Player:
 
         self.timer = Timer()
         self.timer.reset()
+
+        self.renderer = renderer
 
         PhiDataConverter.init(config.width, config.height)
 
@@ -70,7 +72,7 @@ class Player:
 
         logger.info("音乐加载成功")
 
-    def load_illustration(self, illustration: str | bytes | BytesIO, renderer: Renderer):
+    def load_illustration(self, illustration: str | bytes | BytesIO):
         if not illustration:
             logger.warning("未选择曲绘文件")
 
@@ -94,8 +96,8 @@ class Player:
                     math.ceil(image.height * scale)
                 ))
 
-                renderer.texture_manager.create_texture(
-                    renderer.ctx, "illustration", image, TextureCreateTypes.IMAGE)
+                self.renderer.texture_manager.create_texture(
+                    self.renderer.ctx, "illustration", image, TextureCreateTypes.IMAGE)
         except Exception as e:
             import traceback
 
@@ -108,16 +110,16 @@ class Player:
         self.loaded_illustration = True
         logger.info("曲绘加载成功")
 
-    def render_illustration(self, renderer: Renderer):
-        renderer.render_texture("illustration", x=0, y=0, sx=1, sy=1,
+    def render_illustration(self):
+        self.renderer.render_texture("illustration", x=0, y=0, sx=1, sy=1,
                                 r=0, color=(1, 1, 1, 1), anchor=(0.5, 0.5))
 
         # 渲染背景压暗
         # 第一层-固定0.5不透明度
-        renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
+        self.renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
                              color=(0, 0, 0, 0.5), anchor=(0.5, 0.5))
         # 第二层-不透明度跟随配置
-        renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
+        self.renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
                              color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
 
     def _load_note_sounds(self):
@@ -139,7 +141,7 @@ class Player:
 
         self.timer.start()
 
-    def update(self, renderer: Renderer):
+    def update(self):
         if not self.loaded_chart:
             logger.warning("未导入谱面文件")
 
@@ -149,7 +151,7 @@ class Player:
         chart_time = self.chart.to_chart_time(now_time)
 
         if self.loaded_illustration:
-            self.render_illustration(renderer)
+            self.render_illustration()
 
         self.chart.update(chart_time, self.sound_manager)
-        self.chart.render(renderer)
+        self.chart.render(self.renderer)
