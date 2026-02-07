@@ -441,6 +441,8 @@ class PhiChart(Chart):
         self.offset = offset
         self.lines = lines
 
+        self.note_count = sum([line.note_num for line in self.lines])
+
     def to_chart_time(self, now_time: float) -> float:
         return now_time - self.offset
 
