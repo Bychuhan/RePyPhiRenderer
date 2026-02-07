@@ -39,7 +39,7 @@ class VideoRenderer:
         self.total_frame = int(self.video_fps * self.music_length)
 
     def get_progress_bar(self) -> tqdm.tqdm:
-        return tqdm.tqdm(range(self.total_frame), desc="渲染视频", unit="帧")
+        return tqdm.tqdm(range(self.total_frame), desc="渲染视频...", unit="帧")
 
     def create_popen(self):
         ffmpeg_command = [
