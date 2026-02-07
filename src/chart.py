@@ -8,7 +8,7 @@ from collections import deque
 from loguru import logger
 
 from .renderer import Renderer
-from .config import Config
+from .config import *
 from .utils import *
 from .sound_manager import SoundManager
 
