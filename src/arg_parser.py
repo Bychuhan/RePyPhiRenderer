@@ -1,5 +1,6 @@
 from typing import Any, Type, Callable
 import tomllib
+import json
 
 from .arg_specs import *
 
@@ -57,8 +58,11 @@ class ArgParser:
         return result
 
     @staticmethod
-    def parse_from_toml(path):
+    def parse_from_toml(path, as_json: bool = False) -> dict | str:
         with open(path, "rb") as f:
             config = tomllib.load(f)
+
+        if as_json:
+            return json.dumps(config)
 
         return config
