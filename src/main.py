@@ -14,6 +14,11 @@ class PyPR:
     def __init__(self, args: dict[str, Any] = {}):
         # 初始化配置
         self.config = Config(**args)
+        self.res_config = ResConfig.from_json(
+            ArgParser.parse_from_toml(
+                os.path.join(self.config.resources_dir, "config.toml"),
+                True
+            ))
 
         # 初始化 pygame
         if not pygame.get_init():
