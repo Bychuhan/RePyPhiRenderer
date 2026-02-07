@@ -61,8 +61,6 @@ class VideoRenderer:
             self.video_output_path
         ]
 
-        print(ffmpeg_command)
-
         self.process = subprocess.Popen(
             ffmpeg_command, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
