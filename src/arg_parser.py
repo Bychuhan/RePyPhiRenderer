@@ -42,6 +42,10 @@ class ArgParser:
                 except IndexError:
                     value = True  # Flag 处理
 
+                # 当下一项为新的参数，当成 Flag 处理
+                if value.startswith("-") or value.startswith("--"):
+                    value = True
+
             if is_short_arg:
                 key = aliases.get(key, key)  # 参数别名映射，找不到则不变
 
