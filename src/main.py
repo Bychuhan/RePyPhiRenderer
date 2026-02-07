@@ -5,6 +5,7 @@ import pygame
 
 from .window import *
 from .arg_specs import *
+from .arg_parser import *
 from .config import *
 from .player import *
 
