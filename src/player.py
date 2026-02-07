@@ -27,6 +27,7 @@ class Player:
 
         self.music: musicCls = musicCls()
         self.loaded_music = False
+        self.music_length = 0
 
         self.loaded_illustration = False
 
@@ -65,6 +66,7 @@ class Player:
 
         try:
             self.music.load(music)
+            self.music_length = self.music.get_length()
             self.loaded_music = True
         except Exception as e:
             import traceback
