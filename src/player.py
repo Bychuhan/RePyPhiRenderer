@@ -196,13 +196,16 @@ class Player:
 
         self.timer.start()
 
-    def update(self):
+    def update(self, time: float | None = None):
         if not self.loaded_chart:
             logger.warning("未导入谱面文件")
 
             return
 
-        now_time = self.timer.get_time()
+        if time is None:
+            now_time = self.timer.get_time()
+        else:
+            now_time = time
         chart_time = self.chart.to_chart_time(now_time)
 
         if self.loaded_illustration:
