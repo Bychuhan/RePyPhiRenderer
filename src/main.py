@@ -1,13 +1,12 @@
 import sys
 import json
 
-import pygame
-
 from .window import *
 from .arg_specs import *
 from .arg_parser import *
 from .config import *
 from .player import *
+from .video_renderer import *
 
 
 class PyPR:
@@ -20,22 +19,30 @@ class PyPR:
                 True
             ))
 
-        # 初始化 pygame
-        if not pygame.get_init():
-            pygame.init()
+        if not self.config.render:
+            import pygame
 
-        # 初始化窗口
-        self.window = Window(self.config.width, self.config.height,
-                             pygame.DOUBLEBUF | pygame.OPENGL)
+            # 初始化 pygame
+            if not pygame.get_init():
+                pygame.init()
 
-        self.window.create_window()
+            # 初始化窗口
+            self.window = Window(self.config.width, self.config.height,
+                                 pygame.DOUBLEBUF | pygame.OPENGL)
+
+            self.window.create_window()
 
         # 初始化渲染器
-        self.renderer = Renderer(self.config)
+        self.renderer = Renderer(self.config, standalone=self.config.render)
         self.renderer.set_blend(True)
 
         # 初始化播放器
         self.player = Player(self.config, self.res_config, self.renderer)
+
+        self.video_renderer: VideoRenderer = None
+
+        if self.config.render:
+            self.video_renderer = VideoRenderer(self.config)
 
         # 初始化变量
         self.running = True
@@ -61,6 +68,9 @@ class PyPR:
     def import_music(self, music: str | bytes):
         self.player.load_music(music)
 
+        if self.config.render:
+            self.video_renderer.set_music_length(self.player.music_length)
+
     def import_illustration(self, illustration: str | bytes | BytesIO):
         self.player.load_illustration(illustration)
 
@@ -70,7 +80,40 @@ class PyPR:
                 case pygame.QUIT:  # 退出
                     self.running = False
 
+    def render_video(self):
+        if not self.config.render:
+            logger.warning("未启用渲染视频模式")
+
+            return
+
+        self.renderer.create_frame_buffer()
+        self.renderer.frame_buffer.use()
+
+        self.video_renderer.create_popen()
+
+        bar = self.video_renderer.get_progress_bar()
+        time = 0
+
+        pbo = bytearray(self.config.width * self.config.height * 3)
+
+        for _ in bar:
+            self.renderer.clear()
+
+            self.player.update(time=time)
+
+            self.renderer.frame_buffer.read_into(pbo)
+            self.video_renderer.write_frame(pbo)
+
+            time += self.video_renderer.frame_time
+
+        self.video_renderer.close()
+
     def main_loop(self):
+        if self.config.render:
+            self.render_video()
+
+            return
+
         self.player.start()
 
         while self.running:
