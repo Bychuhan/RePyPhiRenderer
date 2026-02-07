@@ -20,6 +20,19 @@ class Renderer:
         # 初始化纹理
         self.texture_manager = TextureManager()
 
+        self.frame_buffer: mgl.Framebuffer = None
+
+    def create_frame_buffer(self, components: int = 4, filter: tuple[int, int] = (mgl.LINEAR, mgl.LINEAR), repeat: bool = False):
+        color_texture = self.ctx.texture(
+            (self.config.width, self.config.height), components)
+        color_texture.filter = filter
+        color_texture.repeat_x = repeat
+        color_texture.repeat_y = repeat
+
+        fbo = self.ctx.framebuffer(color_texture)
+
+        self.frame_buffer = fbo
+
     def set_blend(self, enable: bool = True):
         if enable:
             self.ctx.enable(mgl.BLEND)
