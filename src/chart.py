@@ -411,20 +411,22 @@ class PhiNote:
             if not self.is_hit:
                 renderer.render_texture(self.texture_names[1], self.now_x, self.now_y,
                                         notes_scale[self.texture_names[1]],
-                                        notes_scale[self.texture_names[1]],
+                                        notes_scale[self.texture_names[1]] *
+                                        self.is_above,
                                         self.now_rotate, anchor=(0.5, 1))
 
             # 长条身
             renderer.render_texture(self.texture_names[0], self.now_x, self.now_y,
                                     notes_scale[self.texture_names[0]],
                                     notes_scale["hold-height-scale"] *
-                                    self.now_length,
+                                    self.now_length * self.is_above,
                                     self.now_rotate, anchor=(0.5, 0))
 
             # 长条尾
             renderer.render_texture(self.texture_names[2], self.now_end_x, self.now_end_y,
                                     notes_scale[self.texture_names[2]],
-                                    notes_scale[self.texture_names[2]],
+                                    notes_scale[self.texture_names[2]] *
+                                    self.is_above,
                                     self.now_rotate, anchor=(0.5, 0))
 
         else:  # 其他 Note 渲染
