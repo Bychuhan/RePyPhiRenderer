@@ -14,8 +14,8 @@ ARG_TYPE_HINTS: dict[str, Type] = {
 
     "resources_dir": str,
 
-    "illustration_blurriness": float,
-    "illustration_brightness": float,
+    "ill_blurriness": float,
+    "ill_brightness": float,
 
     "render": bool,
     "video_output_path": str,

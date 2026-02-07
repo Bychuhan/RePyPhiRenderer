@@ -90,7 +90,7 @@ class Player:
             ) as image:
                 image = image.convert("RGBA")
                 image = image.filter(
-                    ImageFilter.GaussianBlur(self.config.illustration_blurriness))
+                    ImageFilter.GaussianBlur(self.config.ill_blurriness))
 
                 scale = max(
                     self.config.width / image.width,
@@ -125,7 +125,7 @@ class Player:
                                   color=(0, 0, 0, 0.5), anchor=(0.5, 0.5))
         # 第二层-不透明度跟随配置
         self.renderer.render_rect(x=0, y=0, w=self.config.width, h=self.config.height, r=0,
-                                  color=(0, 0, 0, self.config.illustration_brightness), anchor=(0.5, 0.5))
+                                  color=(0, 0, 0, self.config.ill_brightness), anchor=(0.5, 0.5))
 
     def _load_note_sounds(self):
         self.sound_manager.create_sound(

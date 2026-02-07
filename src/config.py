@@ -9,8 +9,8 @@ class Config:
 
     resources_dir: str = "resources/"
 
-    illustration_blurriness: float = 80.0
-    illustration_brightness: float = 0.1
+    ill_blurriness: float = 80.0
+    ill_brightness: float = 0.1
 
     render: bool = False
     video_output_path: str = "output.mp4"
