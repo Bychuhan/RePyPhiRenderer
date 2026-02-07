@@ -50,7 +50,7 @@ class VideoRenderer:
             "-pix_fmt", "rgb24",
             "-r", str(self.video_fps),
             "-i", "-",
-            # "-i", ".\\sound.wav",  TODO: 合成打击音效
+            "-i", "outout.wav",
             "-c:v", self.encoder,
             "-b:v", self.video_bitrate,
             "-pix_fmt", "yuv420p",
