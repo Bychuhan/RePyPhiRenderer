@@ -35,7 +35,7 @@ class PyPR:
         self.renderer.set_blend(True)
 
         # 初始化播放器
-        self.player = Player(self.config, self.renderer)
+        self.player = Player(self.config, self.res_config, self.renderer)
 
         # 初始化变量
         self.running = True

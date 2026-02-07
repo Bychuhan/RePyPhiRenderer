@@ -15,8 +15,9 @@ from .sound_manager import *
 
 
 class Player:
-    def __init__(self, config: Config, renderer: Renderer):
+    def __init__(self, config: Config, res_config: ResConfig, renderer: Renderer):
         self.config = config
+        self.res_config = res_config
 
         self.width = config.width
         self.height = config.height
@@ -46,7 +47,7 @@ class Player:
         logger.info("已加载 Note 纹理")
 
     def load_chart(self, chart: dict | Any):
-        self.chart = ChartParser.parse(chart, self.config)
+        self.chart = ChartParser.parse(chart, self.config, self.res_config)
 
         if self.chart is None:
             logger.error("谱面解析失败")

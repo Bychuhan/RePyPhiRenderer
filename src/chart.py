@@ -230,7 +230,7 @@ class NoteResultCode(IntEnum):
 
 
 class PhiLine:
-    def __init__(self, data: dict[str, Any], config: Config, index: int = 0):
+    def __init__(self, data: dict[str, Any], config: Config, res_config: ResConfig, index: int = 0):
         self.index = index  # 调试与 log 用
 
         self.bpm = data["bpm"]
@@ -266,8 +266,7 @@ class PhiLine:
 
         self.width = 5.76 * config.height
         self.height = 0.0075 * config.height
-        # TODO: 从资源配置文件读取判定线颜色
-        self.rgb_color = (0.996078431372549, 1, 0.662745098039216)
+        self.rgb_color = res_config.colors.line_color
 
         logger.info(f"已加载 {self.index} 号判定线")
 
@@ -460,7 +459,7 @@ class PhiChart(Chart):
 
 class ChartParser:
     @staticmethod
-    def parse(chart: dict | Any, config: Config) -> Chart | None:
+    def parse(chart: dict | Any, config: Config, res_config: ResConfig) -> Chart | None:
         if isinstance(chart, dict):
             if "formatVersion" in chart:  # 官谱格式
                 logger.info("检测到官谱格式")
@@ -479,7 +478,7 @@ class ChartParser:
 
                 lines = chart["judgeLineList"]
 
-                line_objs = [PhiLine(line, config, index=index)
+                line_objs = [PhiLine(line, config, res_config, index=index)
                              for index, line in enumerate(lines)]
 
                 logger.info(f"#lines: {len(line_objs)}")
