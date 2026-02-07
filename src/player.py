@@ -79,6 +79,11 @@ class Player:
 
         logger.info("音乐加载成功")
 
+    def unload_music(self):
+        self.music.unload()
+        self.music_length = 0
+        self.load_music = False
+
     def load_illustration(self, illustration: str | bytes | BytesIO):
         if not illustration:
             logger.warning("未选择曲绘文件")
