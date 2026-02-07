@@ -18,7 +18,8 @@
 文档仓库: [pypr-docs](https://github.com/Bychuhan/pypr-docs)
 
 ## 致谢
-- 音频播放代码修改自 [qaqFei/phispler](https://github.com/qaqFei/phispler/) ( MIT )
+- 音频播放代码修改自 [qaqFei/phispler](https://github.com/qaqFei/phispler) ( MIT )
+- 打击特效合成代码来自 [K0nGbawa](https://github.com/K0nGbawa)
 
 ## 运行
 确保你有安装 [Git](https://git-scm.com/install/) 和 [Python](https://www.python.org/downloads/) 。
