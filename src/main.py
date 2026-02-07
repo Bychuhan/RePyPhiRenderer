@@ -7,6 +7,7 @@ from .arg_parser import *
 from .config import *
 from .player import *
 from .video_renderer import *
+from .hitsound_mixer import *
 
 
 class PyPR:
@@ -70,6 +71,12 @@ class PyPR:
 
         if self.config.render:
             self.video_renderer.set_music_length(self.player.music_length)
+
+            self.player.unload_music()
+
+            logger.info("正在混合打击音效...")
+
+            HitSoundMixer.mix_as_file(music, self.player.chart, self.config)
 
     def import_illustration(self, illustration: str | bytes | BytesIO):
         self.player.load_illustration(illustration)
