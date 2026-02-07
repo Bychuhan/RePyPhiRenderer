@@ -1,4 +1,5 @@
 from typing import Any, Type, Callable
+import tomllib
 
 from .arg_specs import *
 
@@ -54,3 +55,10 @@ class ArgParser:
             result[key] = value
 
         return result
+
+    @staticmethod
+    def parse_from_toml(path):
+        with open(path, "rb") as f:
+            config = tomllib.load(f)
+
+        return config
