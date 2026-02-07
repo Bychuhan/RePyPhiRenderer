@@ -43,7 +43,7 @@ class PyPR:
 
         with open(path, "r", encoding="utf-8") as f:
             try:
-                self.player.load_chart(json.load(f), self.config)
+                self.player.load_chart(json.load(f))
             except Exception as e:
                 import traceback
 

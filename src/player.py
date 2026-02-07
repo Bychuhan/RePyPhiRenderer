@@ -45,8 +45,8 @@ class Player:
         self.notes_texture_scale = self._get_note_scale()
         logger.info("已加载 Note 纹理")
 
-    def load_chart(self, chart: dict | Any, config: Config):
-        self.chart = ChartParser.parse(chart, config)
+    def load_chart(self, chart: dict | Any):
+        self.chart = ChartParser.parse(chart, self.config)
 
         if self.chart is None:
             logger.error("谱面解析失败")
