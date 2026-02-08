@@ -3,8 +3,8 @@
 [![License](https://img.shields.io/badge/license-MIT-8A2BE2.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/Bychuhan/RePyPhiRenderer/releases)
 ![Python Version](https://img.shields.io/badge/python-3.13%2B-3776AB?logo=python&logoColor=white)
-![Stars](https://img.shields.io/github/stars/Bychuhan/RePyPhiRenderer?style=flat&color=FFA500&label=Stars)
-![Forks](https://img.shields.io/github/forks/Bychuhan/RePyPhiRenderer?style=flat&color=blue&label=Forks)
+![Stars](https://img.shields.io/github/stars/Bychuhan/RePyPhiRenderer?style=flat&color=FFA500)
+![Forks](https://img.shields.io/github/forks/Bychuhan/RePyPhiRenderer?style=flat&color=blue)
 ![Commit Activity](https://img.shields.io/github/commit-activity/t/Bychuhan/RePyPhiRenderer?color=brightgreen&label=Commits)
 ![PEP8](https://img.shields.io/badge/code%20style-PEP%208-306998)
 
