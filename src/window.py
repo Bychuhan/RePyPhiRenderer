@@ -1,6 +1,4 @@
 import pygame
-import moderngl as mgl
-
 
 from .renderer import *
 
