@@ -5,8 +5,8 @@
 ![Python Version](https://img.shields.io/badge/python-3.13%2B-3776AB?logo=python&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/Bychuhan/RePyPhiRenderer?style=flat&color=FFA500)
 ![Forks](https://img.shields.io/github/forks/Bychuhan/RePyPhiRenderer?style=flat&color=blue)
-![Commit Activity](https://img.shields.io/github/commit-activity/t/Bychuhan/RePyPhiRenderer?color=brightgreen&label=Commits)
-![PEP8](https://img.shields.io/badge/code%20style-PEP%208-306998)
+![Commits](https://img.shields.io/github/commit-activity/t/Bychuhan/RePyPhiRenderer?color=brightgreen)
+![Code Style](https://img.shields.io/badge/code%20style-PEP%208-306998)
 
 基于 Python 的 Phigros 谱面播放器 / 渲染器。
 
